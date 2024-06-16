@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Wall</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 20px;
+      padding: 20px;
+    }
+    
+    .photo-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+    }
+    
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    
+    .photo-item.focused {
+      transform: scale(1.1);
+      z-index: 1;
+    }
+    
+    .photo-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+    
+    .photo-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <div class="photo-grid"></div>
+  
+  <div class="photo-overlay">
+    <img src="" alt="Fullscreen Photo">
+  </div>
+  
+  <script>
+    const photoLinks = [
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/1718366623426.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/999.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/988.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/968.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/966.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/955.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/929.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/928.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/922.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/919.jpg",         		             "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/918.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/911.jpg",
+            "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/909.jpg",
+		       "https://huixin-1317177511.cos.ap-guangzhou.myqcloud.com/img/901.jpg"
+        ];
+
+    const photoGrid = document.querySelector('.photo-grid');
+    const photoOverlay = document.querySelector('.photo-overlay');
+    const fullscreenPhoto = photoOverlay.querySelector('img');
+
+    let isLongPressed = false;
+
+    photoLinks.forEach(link => {
+      const photoItem = document.createElement('div');
+      photoItem.classList.add('photo-item');
+
+      const img = document.createElement('img');
+      img.src = link;
+      img.alt = link;
+
+      photoItem.appendChild(img);
+      photoGrid.appendChild(photoItem);
+
+      photoItem.addEventListener('click', () => {
+        if (!isLongPressed) {
+          photoOverlay.style.display = 'flex';
+          fullscreenPhoto.src = img.src;
+        }
+        isLongPressed = false;
+      });
+
+      photoItem.addEventListener('touchstart', () => {
+        isLongPressed = false;
+        setTimeout(() => {
+          isLongPressed = true;
+          photoItem.classList.add('focused');
+        }, 500);
+      });
+
+      photoItem.addEventListener('touchend', () => {
+        clearTimeout(this);
+        photoItem.classList.remove('focused');
+      });
+    });
+
+    photoOverlay.addEventListener('click', () => {
+      photoOverlay.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
